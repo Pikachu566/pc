@@ -104,8 +104,11 @@
     </tbody>
   </table>
 
-  <button onclick="calculate()">Calculate</button>
-  <button onclick="window.print()">Print to PDF</button>
+<button class="button" onclick="window.location.href='index.html'">Back</button>
+<button onclick="calculate()">Calculate</button>
+<button onclick="window.print()">Print to PDF</button>
+<button class="button" onclick="saveData()">💾 Simpan Data</button>
+<button class="button" onclick="resetData()">🧹 Reset Data</button>
 
   <script>
     const costInputs = document.querySelectorAll(".cost");
@@ -150,7 +153,69 @@
       document.getElementById("totalSell").value = totalSell.toFixed(2);
       document.getElementById("totalProfit").value = totalProfit.toFixed(2);
     }
-  </script>
+  // Fungsi Simpan Baris Baru untuk save dan reset
+function saveData() {
+  const data = [];
+
+  const modelInputs = document.querySelectorAll("td:nth-child(2) input");
+
+  costInputs.forEach((costInput, index) => {
+    const sellInput = sellInputs[index];
+    const profitInput = profitInputs[index];
+    const modelInput = modelInputs[index];
+
+    const row = {
+      model: modelInput.value,
+      cost: costInput.value,
+      sell: sellInput.value,
+      profit: profitInput.value
+    };
+    data.push(row);
+  });
+
+  localStorage.setItem("pcItemData", JSON.stringify(data));
+  alert("✅ Data berjaya disimpan!");
+}
+
+
+
+  // Fungsi Reset
+function resetData() {
+  if (confirm("Padam semua data?")) {
+    localStorage.removeItem("pcItemData");
+
+    const modelInputs = document.querySelectorAll("td:nth-child(2) input");
+
+    costInputs.forEach(input => input.value = "");
+    sellInputs.forEach(input => input.value = "");
+    profitInputs.forEach(input => input.value = "");
+    modelInputs.forEach(input => input.value = "");
+
+    document.getElementById("totalCost").value = "";
+    document.getElementById("totalSell").value = "";
+    document.getElementById("totalProfit").value = "";
+
+    alert("🧹 Data telah dipadam.");
+  }
+}
+
+
+window.onload = function () {
+  const savedData = JSON.parse(localStorage.getItem("pcItemData"));
+  if (savedData) {
+    const modelInputs = document.querySelectorAll("td:nth-child(2) input");
+
+    savedData.forEach((row, index) => {
+      if (modelInputs[index]) modelInputs[index].value = row.model || "";
+      if (costInputs[index]) costInputs[index].value = row.cost || "";
+      if (sellInputs[index]) sellInputs[index].value = row.sell || "";
+      if (profitInputs[index]) profitInputs[index].value = row.profit || "";
+    });
+  }
+};
+
+
+</script>
 
 </body>
 </html>
